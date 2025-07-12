@@ -1,7 +1,7 @@
 const Product = require("../models/Product");
 const User = require("../models/User");
 const path = require("path");
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcryptjs');
 
 const getAllProducts = async (req, res, next) => {
   try {

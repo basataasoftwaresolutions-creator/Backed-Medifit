@@ -3,13 +3,7 @@
   "builds": [
     {
       "src": "index.js",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "node_modules/bcrypt/lib/binding/**"
-          
-        ]
-      }
+      "use": "@vercel/node"
     }
   ],
   "routes": [
@@ -17,10 +11,5 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
-  ],
-  "functions": {
-    "index.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
