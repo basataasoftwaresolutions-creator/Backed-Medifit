@@ -85,12 +85,17 @@ connectdb();
 // Serve static files
 app.use('/uploads', express.static(path.join(__dirname, '../../Medifit_Folder/Main-Medifit/src/assets/img')));
 
-// CORS configuration
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-frontend-domain.vercel.app']
-    : 'http://localhost:4200',
-  credentials: true 
+    ? [
+        'https://your-actual-frontend.vercel.app', // ضع الدومين الحقيقي هنا
+        'https://your-domain.com', // أي دومين آخر
+        'http://localhost:4200' // للتطوير المحلي
+      ]
+    : ['http://localhost:4200', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));
 
