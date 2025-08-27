@@ -92,7 +92,8 @@ const corsOptions = {
     
     const allowedOrigins = process.env.NODE_ENV === 'production' 
       ? [
-          'https://backend-medifit.vercel.app'
+          'https://backend-medifit.vercel.app',
+          'http://localhost:4200',
         ]
       : ['http://localhost:4200', 'http://localhost:3000'];
     
@@ -178,7 +179,7 @@ passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.NODE_ENV === 'production' 
-    ? 'https://backend-medifit.vercel.app/auth/google/callback'
+    ? 'https://your-backend-domain.vercel.app/auth/google/callback'
     : 'http://localhost:5500/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
   try {
@@ -227,7 +228,7 @@ app.get('/auth/google/callback',
       );
       
       const frontendURL = process.env.NODE_ENV === 'production'
-        ? 'https://backend-medifit.vercel.app'
+        ? 'https://your-frontend-domain.vercel.app'
         : 'http://localhost:4200';
       
       res.send(`
@@ -262,7 +263,7 @@ app.get('/auth/google/callback',
 
 app.get('/auth/google/cancel', (req, res) => {
   const frontendURL = process.env.NODE_ENV === 'production'
-    ? 'https://backend-medifit.vercel.app'
+    ? 'https://your-frontend-domain.vercel.app'
     : 'http://localhost:4200';
   res.redirect(`${frontendURL}/signup`);
 });
