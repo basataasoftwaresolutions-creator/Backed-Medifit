@@ -86,17 +86,29 @@ connectdb();
 app.use('/uploads', express.static(path.join(__dirname, '../../Medifit_Folder/Main-Medifit/src/assets/img')));
 
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? [
-        'https://your-actual-frontend.vercel.app', // ضع الدومين الحقيقي هنا
-        'https://your-domain.com', // أي دومين آخر
-        'http://localhost:4200' // للتطوير المحلي
-      ]
-    : ['http://localhost:4200', 'http://localhost:3000'],
+  origin: function (origin, callback) {
+    // السماح للطلبات بدون origin (مثل Postman)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = process.env.NODE_ENV === 'production' 
+      ? [
+          'https://backend-medifit.vercel.app'
+        ]
+      : ['http://localhost:4200', 'http://localhost:3000'];
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204
 };
+
 app.use(cors(corsOptions));
 
 // Middleware
@@ -166,7 +178,7 @@ passport.use(new GoogleStrategy({
   clientID: process.env.GOOGLE_CLIENT_ID,
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.NODE_ENV === 'production' 
-    ? 'https://your-backend-domain.vercel.app/auth/google/callback'
+    ? 'https://backend-medifit.vercel.app/auth/google/callback'
     : 'http://localhost:5500/auth/google/callback'
 }, async (accessToken, refreshToken, profile, done) => {
   try {
@@ -215,7 +227,7 @@ app.get('/auth/google/callback',
       );
       
       const frontendURL = process.env.NODE_ENV === 'production'
-        ? 'https://your-frontend-domain.vercel.app'
+        ? 'https://backend-medifit.vercel.app'
         : 'http://localhost:4200';
       
       res.send(`
@@ -250,7 +262,7 @@ app.get('/auth/google/callback',
 
 app.get('/auth/google/cancel', (req, res) => {
   const frontendURL = process.env.NODE_ENV === 'production'
-    ? 'https://your-frontend-domain.vercel.app'
+    ? 'https://backend-medifit.vercel.app'
     : 'http://localhost:4200';
   res.redirect(`${frontendURL}/signup`);
 });
