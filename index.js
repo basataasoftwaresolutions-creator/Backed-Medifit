@@ -185,6 +185,14 @@ app.use(async (req, res, next) => {
   next();
 });
 
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Medifit Backend API',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Health check endpoint
 app.get("/health", (req, res) => {
   const dbStatus = mongoose.connection.readyState;
@@ -221,7 +229,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         process.env.NODE_ENV === "production"
-          ? `${process.env.BACKEND_URL || 'https://backed-medifit-production.up.railway.app/'}/auth/google/callback` 
+          ? `${process.env.BACKEND_URL || 'https://backed-medifit-production.up.railway.app'}/auth/google/callback` 
           : "http://localhost:5500/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
