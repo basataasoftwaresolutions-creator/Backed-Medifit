@@ -97,8 +97,7 @@ app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 // CORS configuration
 const corsOptions = {
   origin: function (origin, callback) {
-    // السماح بالطلبات بدون origin (Railway health checks)
-    if (!origin) return callback(null, true);
+    if (!origin) return callback(null, true); // سماح للـ health checks أو requests الداخلية
 
     const allowedOrigins =
       process.env.NODE_ENV === "production"
@@ -112,25 +111,21 @@ const corsOptions = {
             "http://localhost:3000", 
           ];
 
-    if (allowedOrigins.indexOf(origin) !== -1) {
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      // في production، log الـ origin المرفوض بدلاً من رفع error
-      console.log('CORS blocked origin:', origin);
+      console.log("CORS blocked origin:", origin);
       callback(null, false);
     }
   },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
   allowedHeaders: [
-    "Content-Type", 
-    "Authorization", 
-    "ngrok-skip-browser-warning",
-    "User-Agent"
+    "Content-Type",
+    "Authorization",
+    "bypass-tunnel-reminder" // 👈 أضفناه مخصوص عشان يحل مشكلتك
   ],
-  exposedHeaders: ["ngrok-skip-browser-warning"],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
