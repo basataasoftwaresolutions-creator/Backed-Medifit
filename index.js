@@ -27,7 +27,7 @@ dns.setServers(["8.8.8.8", "8.8.4.4"]);
 
 // Initialize Express app
 const app = express();
-const PORT = process.env.PORT || 5500;
+const PORT = 5500;
 
 // Database connection with retry logic
 let isConnected = false;
@@ -91,12 +91,8 @@ mongoose.connection.on("disconnected", () => {
 connectdb();
 
 // Serve static files
-app.use(
-  "/uploads",
-  express.static(
-    path.join(__dirname, "../../Medifit_Folder/Main-Medifit/src/assets/img")
-  )
-);
+app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+
 
 // CORS configuration
 const corsOptions = {
@@ -254,7 +250,7 @@ passport.use(
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL:
         process.env.NODE_ENV === "production"
-          ? `${process.env.BACKEND_URL}/auth/google/callback`
+          ? `https://backed-medifit-production.up.railway.app/auth/google/callback`
           : "http://localhost:5500/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
