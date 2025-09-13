@@ -94,39 +94,47 @@ connectdb();
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 
-// CORS configuration
+// CORS configuration محدث خصيصاً لـ iOS
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // سماح للـ health checks أو requests الداخلية
-
-    const allowedOrigins =
-      process.env.NODE_ENV === "production"
-        ? [
-            "https://medifit1.netlify.app",
-            "https://www.medifit1.netlify.app",
-            "http://localhost:4200",
-          ]
-        : [
-            "http://localhost:4200", 
-            "http://localhost:3000", 
-          ];
-
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("CORS blocked origin:", origin);
-      callback(null, false);
+    // مهم جداً: السماح للطلبات بدون origin (iOS apps)
+    if (!origin) return callback(null, true);
+    
+    // في Production: السماح بكل الـ origins مؤقتاً لحل مشكلة iOS
+    if (process.env.NODE_ENV === "production") {
+      return callback(null, true);
     }
+    
+    callback(null, true);
   },
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
-    "bypass-tunnel-reminder" // 👈 أضفناه مخصوص عشان يحل مشكلتك
-  ],
-  optionsSuccessStatus: 204
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"],
+  allowedHeaders: "*", // السماح بكل الـ headers
+  exposedHeaders: ["Authorization"],
+  optionsSuccessStatus: 200, // مهم لـ iOS Safari
+  preflightContinue: false
 };
+
+// تطبيق CORS
+app.use(cors(corsOptions));
+
+// مهم جداً: handle لـ preflight requests
+app.options('*', cors(corsOptions));
+
+// إضافة headers يدوياً لكل الـ responses (حل إضافي قوي)
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS, HEAD');
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  
+  // مهم لـ iOS
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  
+  next();
+});
 
 app.use(cors(corsOptions));
 
