@@ -5,7 +5,7 @@ const {  submitContactForm,getAllContacts} = require("../Controllers/Contactus")
 const {validateContactForm,ValidationErrors} = require("../validation/validate");
 
 
-const upload = require("../middlewares/upload");
+const upload = require("../middlewares/upload_old");
 const auth = require("../middlewares/auth");
 const path = require("path");
 

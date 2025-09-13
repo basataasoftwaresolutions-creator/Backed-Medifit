@@ -1,5 +1,4 @@
 const express = require("express");
-const { body } = require("express-validator");
 const router = express.Router();
 const {
   getAllProducts,
@@ -14,9 +13,9 @@ const {
   validateEditproduct,
   validateDeleteAllproduct,
 } = require("../validation/validate");
-const upload = require("../middlewares/upload");
+// هنا التغيير المهم - استخدم upload من cloudinary وليس من middlewares/upload
+const { upload } = require("../Config/cloudinary"); 
 const auth = require("../middlewares/auth");
-const path = require("path");
 
 router.get("/getAllProducts", getAllProducts);
 
@@ -40,6 +39,12 @@ router.patch(
 
 router.delete("/deleteProduct/:id", auth(["admin"]), deleteProduct);
 
-router.delete("/deleteAllProducts", auth(["admin"]) , validateDeleteAllproduct , ValidationErrors ,deleteAllProducts);
+router.delete(
+  "/deleteAllProducts", 
+  auth(["admin"]), 
+  validateDeleteAllproduct, 
+  ValidationErrors,
+  deleteAllProducts
+);
 
 module.exports = router;
