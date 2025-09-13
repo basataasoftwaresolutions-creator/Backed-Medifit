@@ -107,7 +107,8 @@ const deleteProduct = async (req, res, next) => {
       await cloudinary.uploader.destroy(`medifit-products/${publicId}`);
     }
 
-    await product.findByIdAndDelete(req.params.id);
+    // استخدم Product مع P كبيرة وليس product
+    await Product.findByIdAndDelete(req.params.id);
     res.json({ message: "Product deleted successfully" });
   } catch (error) {
     next(error);
